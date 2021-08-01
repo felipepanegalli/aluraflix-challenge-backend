@@ -9,5 +9,9 @@ class Video extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['titulo', 'descricao', 'url'];
+    protected $fillable = ['titulo', 'descricao', 'url', 'categoriaId'];
+
+    public function categorias(){
+        return $this->hasOne(Categoria::class, 'categoriaId');
+    }
 }

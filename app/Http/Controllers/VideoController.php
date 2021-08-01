@@ -17,10 +17,16 @@ class VideoController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->has('search')) {
+            $title = $request->input('search');
+            $videos = Video::query()->where('titulo', 'LIKE', "%$title%")->get();
+            return response()->json(['videos' => $videos ?? 'Nenhum vídeo encontrado.']);
+        }
         $videos = Video::all();
 
         return response()->json(['videos' => $videos]);
@@ -62,7 +68,7 @@ class VideoController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function update(Request $request, int $id)
-    {git init
+    {
         $validator = Validator::make($request->all(), $this->rules);
 
         if ($validator->fails()) return response()->json(['erros' => $validator->errors()], 400);
@@ -86,6 +92,18 @@ class VideoController extends Controller
     {
         $video = Video::findOrFail($id);
         $status = $video->delete();
-        return response()->json(['video' => $status ? 'Video removido com sucesso.' : 'Falha ao remover vídeo.'], $status ? 200 : 400);
+        return response()->json(['video' => $status ? 'Registro removido com sucesso.' : 'Falha ao remover registro.'], $status ? 200 : 400);
+    }
+
+    /**
+     * Get videos by categoryID
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getVideosByCategoriaId(int $id)
+    {
+        $videos = Video::where('categoriaId', $id)->get();
+        return response()->json(['videos' => $videos ?? 'Nenhum vídeo encontrado para esta categoria.']);
     }
 }
