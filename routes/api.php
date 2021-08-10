@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\VideoController;
 use Illuminate\Http\Request;
@@ -16,8 +17,18 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+
+Route::get('unauthorized', function () {
+    return response()->json(['message' => 'Não autorizado']);
+})->name('login');
+
+Route::post('/auth/register', [AuthController::class, 'register']);
+Route::post('/auth/login', [AuthController::class, 'login']);
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::get('/me', function () {
+        return auth()->user();
+    });
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
 });
 
 Route::prefix('videos')->group(function () {
@@ -36,4 +47,3 @@ Route::prefix('categorias')->group(function () {
     Route::delete('{id}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
     Route::get('{id}/videos', [VideoController::class, 'getVideosByCategoriaId'])->name('categorias.videos');
 });
-
