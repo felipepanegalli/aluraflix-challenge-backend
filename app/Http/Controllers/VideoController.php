@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Video;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -105,5 +107,18 @@ class VideoController extends Controller
     {
         $videos = Video::where('categoriaId', $id)->get();
         return response()->json(['videos' => $videos ?? 'Nenhum vídeo encontrado para esta categoria.']);
+    }
+
+    /**
+     * Get first 2 videos free
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws BindingResolutionException
+     */
+    public function free()
+    {
+        $videos = Video::limit(2)->get();
+        return response()->json(['videos' => $videos]);
     }
 }

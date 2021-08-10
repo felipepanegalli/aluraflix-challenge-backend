@@ -67,4 +67,14 @@ class AuthController extends Controller
             'message' => 'Logout realizado com sucesso'
         ];
     }
+
+    public function me()
+    {
+        return auth()->user();
+    }
+
+    public function default()
+    {
+        return $this->error(null, 'Não autorizado. Você precisa realizar o login para acessar essa área.', 401);;
+    }
 }

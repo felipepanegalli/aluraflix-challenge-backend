@@ -17,33 +17,34 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('/', [AuthController::class, 'default'])->name('login');
+Route::post('/auth/register', [AuthController::class, 'register'])->name('auth.register');
+Route::post('/auth/login', [AuthController::class, 'login'])->name('auth.login');
+Route::get('/free', [VideoController::class, 'free'])->name('videos.free');
 
-Route::get('unauthorized', function () {
-    return response()->json(['message' => 'Não autorizado']);
-})->name('login');
-
-Route::post('/auth/register', [AuthController::class, 'register']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+// Authenticated Routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::get('/me', function () {
-        return auth()->user();
+
+    // Auth Routes
+    Route::get('/me', [AuthController::class, 'me'])->name('auth.me');
+    Route::post('/auth/logout', [AuthController::class, 'logout'])->name('auth.logout');
+
+    // Videos Routes
+    Route::prefix('videos')->group(function () {
+        Route::get('', [VideoController::class, 'index'])->name('videos.index');
+        Route::post('', [VideoController::class, 'store'])->name('videos.store');
+        Route::get('{id}', [VideoController::class, 'show'])->name('videos.show');
+        Route::put('{id}', [VideoController::class, 'update'])->name('videos.update');
+        Route::delete('{id}', [VideoController::class, 'destroy'])->name('videos.destroy');
     });
-    Route::post('/auth/logout', [AuthController::class, 'logout']);
-});
 
-Route::prefix('videos')->group(function () {
-    Route::get('', [VideoController::class, 'index'])->name('videos.index');
-    Route::post('', [VideoController::class, 'store'])->name('videos.store');
-    Route::get('{id}', [VideoController::class, 'show'])->name('videos.show');
-    Route::put('{id}', [VideoController::class, 'update'])->name('videos.update');
-    Route::delete('{id}', [VideoController::class, 'destroy'])->name('videos.destroy');
-});
-
-Route::prefix('categorias')->group(function () {
-    Route::get('', [CategoriaController::class, 'index'])->name('categorias.index');
-    Route::post('', [CategoriaController::class, 'store'])->name('categorias.store');
-    Route::get('{id}', [CategoriaController::class, 'show'])->name('categorias.show');
-    Route::put('{id}', [CategoriaController::class, 'update'])->name('categorias.update');
-    Route::delete('{id}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
-    Route::get('{id}/videos', [VideoController::class, 'getVideosByCategoriaId'])->name('categorias.videos');
+    // Categorias Routes
+    Route::prefix('categorias')->group(function () {
+        Route::get('', [CategoriaController::class, 'index'])->name('categorias.index');
+        Route::post('', [CategoriaController::class, 'store'])->name('categorias.store');
+        Route::get('{id}', [CategoriaController::class, 'show'])->name('categorias.show');
+        Route::put('{id}', [CategoriaController::class, 'update'])->name('categorias.update');
+        Route::delete('{id}', [CategoriaController::class, 'destroy'])->name('categorias.destroy');
+        Route::get('{id}/videos', [VideoController::class, 'getVideosByCategoriaId'])->name('categorias.videos');
+    });
 });
