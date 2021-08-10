@@ -20,7 +20,7 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        $categorias = Categoria::with('videos')->get();
+        $categorias = Categoria::with('videos')->paginate(10);;
         return response()->json($categorias);
     }
 

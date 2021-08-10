@@ -27,7 +27,7 @@ class VideoController extends Controller
             $videos = Video::query()->where('titulo', 'LIKE', "%$title%")->get();
             return response()->json(['videos' => $videos ?? 'Nenhum vídeo encontrado.']);
         }
-        $videos = Video::all();
+        $videos = Video::paginate(10);
 
         return response()->json(['videos' => $videos]);
     }
