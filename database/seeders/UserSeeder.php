@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Factory::create();
+        $faker = Factory::create('pt_BR');
         $data = [
             'name' => $faker->name(),
             'email' => $faker->unique()->safeEmail(),
